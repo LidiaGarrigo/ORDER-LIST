@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "prueba-5bc2b": {
+      "hosting": {
+        "orders": [
+          "prueba-5bc2b"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "prueba-5bc2b"
+  }
+}

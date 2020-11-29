@@ -1,3 +1,5 @@
+import { Order } from './../shared/interfaces/order';
+import { OrderService } from './../shared/services/order.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,10 +8,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./order-list.component.scss']
 })
 export class OrderListComponent implements OnInit {
-
-  constructor() { }
+orderList: Order[];
+  constructor(private orderService: OrderService) { }
 
   ngOnInit(): void {
+    this.orderService.read$().subscribe(
+      data => this.orderList = data);
   }
+delete(order){
+  this.orderService.delete(order);
 
+}
 }

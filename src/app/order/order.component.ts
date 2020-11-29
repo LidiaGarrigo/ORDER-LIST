@@ -1,67 +1,83 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import {v4 as uuid} from 'uuid';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { v4 as uuid } from 'uuid';
 import { Order } from '../shared/interfaces/order';
 import { OrderService } from '../shared/services/order.service';
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
-  styleUrls: ['./order.component.scss']
+  styleUrls: ['./order.component.scss'],
 })
 export class OrderComponent implements OnInit {
-
   products = [
-    "Americano",
-    "Flat White",
-    "Cappuccino",
-    "Latte",
-    "Espresso",
-    "Machiato",
-    "Mocha",
-    "Hot Chocolate",
-    "Tea"
+    'Americano',
+    'Flat White',
+    'Cappuccino',
+    'Latte',
+    'Espresso',
+    'Machiato',
+    'Mocha',
+    'Hot Chocolate',
+    'Tea',
   ];
 
-  sendSuccess =false;
+  sendSuccess = false;
+  removable = true;
   orderProducts: string[];
 
   formGroup: FormGroup;
-
+  error: boolean;
 
   constructor(private fb: FormBuilder, private orderService: OrderService) {
-    this.orderProducts=[];
+    this.orderProducts = [];
   }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      name:'',
-      table:'',
+      name: ['', Validators.required],
+      table:['', Validators.required]
     })
   }
 
-  addToOrder(product){
+  addToOrder(product) {
     this.orderProducts.push(product);
   }
 
-  removeFromOrder(i){
-    this.orderProducts.splice(i,1);
+  removeFromOrder(i) {
+    this.orderProducts.splice(i, 1);
   }
 
-  submit(form){
+  // tslint:disable-next-line: typedef
+  submit() {
+    if(this.formGroup.invalid) {
+      return this.error =true;
+    }
 
-    let order: Order = {
+    const {name, table} = this.formGroup.value;
+
+    const order: Order = {
       id:      uuid(),
-      name:    form.get('name').value,
-      table:   form.get('table').value,
+      name,
+      table,
+      /*     this.form.get('name').value,
+      table:   this.form.get('table').value, */
       products:this.orderProducts
     }
 
-    this.orderService.create(order).subscribe(e => {
+    console.log(order);
+
+    /* this.orderService.create$(order).subscribe(e => {
       this.formGroup.reset();
       this.orderProducts=[];
       this.sendSuccess=true;
-    });
+      setTimeout(_=>this.sendSuccess=false,2000);
+    }); */
 
+    this.orderService.create(order);
+    this.formGroup.reset();
+    this.orderProducts=[];
+    this.sendSuccess=true;
+    setTimeout(_=>this.sendSuccess=false,2000);
   }
-
 }
